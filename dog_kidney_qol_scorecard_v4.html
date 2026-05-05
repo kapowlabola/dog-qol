@@ -1,266 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dog Quality of Life Scorecard — Kidney Disease</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<style>
-  .section-label { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 8px; }
-  .category-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px; }
-  .cat-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin: 0; }
-  .cat-subtitle { font-size: 12px; color: var(--color-text-secondary); margin: 2px 0 0; }
-  .score-buttons { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
-  .score-btn { width: 36px; height: 36px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--color-text-secondary); }
-  .score-desc { font-size: 12px; color: var(--color-text-secondary); margin-top: 8px; min-height: 16px; font-style: italic; }
-  .summary-bar { height: 8px; border-radius: 4px; background: var(--color-background-secondary); overflow: hidden; margin: 12px 0 6px; }
-  .summary-fill { height: 100%; border-radius: 4px; transition: width 0.3s, background 0.3s; }
-  .verdict { font-size: 13px; margin-top: 4px; padding: 8px 12px; border-radius: var(--border-radius-md); }
-  .note-area { width: 100%; min-height: 64px; font-size: 13px; padding: 10px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); resize: vertical; font-family: var(--font-sans); box-sizing: border-box; }
-  .action-btn { width: 100%; padding: 10px; font-size: 14px; cursor: pointer; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); margin-top: 12px; }
-  .action-btn:hover { background: var(--color-background-secondary); }
-  .date-row { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
-  .score-tally { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
-  .tally-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; }
-  .tally-label { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 2px; }
-  .tally-val { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin: 0; }
-  .scale-legend { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-secondary); margin-bottom: 16px; padding: 6px 10px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); }
-</style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f4f0;
+      color: #1a1a18;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
 
-<h2 style="position:absolute;left:-9999px;">Dog quality of life scorecard for kidney disease</h2>
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
 
-<div style="padding: 1rem 0 0;">
-  <div class="date-row">
-    <label style="font-size:13px;color:var(--color-text-secondary);white-space:nowrap;">Date</label>
-    <input type="date" id="entry-date" />
-    <input type="text" placeholder="Dog's name" id="dog-name" style="flex:1;height:36px;padding:0 10px;font-size:13px;" />
-  </div>
+    h1 {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
 
-  <div class="scale-legend">
-    <span style="color:#A32D2D;">1 — severe / constant</span>
-    <span>2 — frequent</span>
-    <span>3 — occasional</span>
-    <span>4 — rare</span>
-    <span style="color:#3B6D11;">5 — none / normal</span>
-  </div>
+    .subtitle {
+      font-size: 13px;
+      color: #5f5e5a;
+      margin-bottom: 24px;
+    }
 
-  <div id="categories"></div>
+    .date-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
 
-  <div style="margin-top: 20px;">
-    <p class="section-label">Summary</p>
-    <div class="score-tally">
-      <div class="tally-card"><p class="tally-label">Total score</p><p class="tally-val" id="total-score">—</p></div>
-      <div class="tally-card"><p class="tally-label">Out of</p><p class="tally-val" id="max-score">—</p></div>
+    .date-row label {
+      font-size: 13px;
+      color: #5f5e5a;
+      white-space: nowrap;
+    }
+
+    input[type="date"], input[type="text"] {
+      flex: 1;
+      height: 36px;
+      padding: 0 10px;
+      font-size: 13px;
+      border: 0.5px solid #c8c7bf;
+      border-radius: 8px;
+      background: #fff;
+      color: #1a1a18;
+      font-family: inherit;
+    }
+
+    input[type="date"]:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: #888780;
+    }
+
+    .scale-legend {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #5f5e5a;
+      margin-bottom: 16px;
+      padding: 6px 10px;
+      background: #eeede8;
+      border-radius: 8px;
+    }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #5f5e5a;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0 0 8px;
+    }
+
+    .category-card {
+      background: #fff;
+      border: 0.5px solid #d3d1c7;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 10px;
+    }
+
+    .cat-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a1a18;
+    }
+
+    .cat-subtitle {
+      font-size: 12px;
+      color: #5f5e5a;
+      margin: 2px 0 0;
+    }
+
+    .score-buttons {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .score-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 0.5px solid #c8c7bf;
+      background: #f1efe8;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #5f5e5a;
+      font-family: inherit;
+      transition: background 0.1s, color 0.1s, border 0.1s;
+    }
+
+    .score-btn:hover {
+      background: #e2e0d8;
+    }
+
+    .score-desc {
+      font-size: 12px;
+      color: #5f5e5a;
+      margin-top: 8px;
+      min-height: 16px;
+      font-style: italic;
+    }
+
+    .summary-section {
+      margin-top: 24px;
+    }
+
+    .score-tally {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .tally-card {
+      background: #f1efe8;
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .tally-label {
+      font-size: 12px;
+      color: #5f5e5a;
+      margin-bottom: 2px;
+    }
+
+    .tally-val {
+      font-size: 24px;
+      font-weight: 500;
+      color: #1a1a18;
+    }
+
+    .summary-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: #d3d1c7;
+      overflow: hidden;
+      margin: 12px 0 6px;
+    }
+
+    .summary-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s, background 0.3s;
+      width: 0%;
+      background: #c0dd97;
+    }
+
+    .verdict {
+      font-size: 13px;
+      margin-top: 4px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: #f1efe8;
+      color: #5f5e5a;
+      line-height: 1.5;
+    }
+
+    .notes-section {
+      margin-top: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      font-size: 13px;
+      padding: 10px;
+      border: 0.5px solid #d3d1c7;
+      border-radius: 8px;
+      background: #f1efe8;
+      color: #1a1a18;
+      resize: vertical;
+      font-family: inherit;
+      line-height: 1.5;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #888780;
+    }
+
+    .print-btn {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 8px;
+      border: 0.5px solid #c8c7bf;
+      background: #fff;
+      color: #1a1a18;
+      margin-top: 12px;
+      font-family: inherit;
+    }
+
+    .print-btn:hover { background: #f1efe8; }
+
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: #888780;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 0.5px solid #d3d1c7;
+    }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .print-btn { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .scale-legend { flex-wrap: wrap; gap: 4px; }
+      .date-row { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Quality of life scorecard</h1>
+    <p class="subtitle">Kidney disease — based on the HHHHHMM scale. Score each category 1 (worst) to 5 (best).</p>
+
+    <div class="date-row">
+      <label>Date</label>
+      <input type="date" id="entry-date" />
+      <input type="text" id="dog-name" placeholder="Dog's name" />
     </div>
-    <div class="summary-bar"><div class="summary-fill" id="score-bar" style="width:0%;background:#C0DD97;"></div></div>
-    <div class="verdict" id="verdict-box" style="background:var(--color-background-secondary);color:var(--color-text-secondary);">Score all categories to see a recommendation.</div>
+
+    <div class="scale-legend">
+      <span style="color:#a32d2d;">1 — severe / constant</span>
+      <span>2 — frequent</span>
+      <span>3 — occasional</span>
+      <span>4 — rare</span>
+      <span style="color:#3b6d11;">5 — none / normal</span>
+    </div>
+
+    <div id="categories"></div>
+
+    <div class="summary-section">
+      <p class="section-label">Summary</p>
+      <div class="score-tally">
+        <div class="tally-card">
+          <p class="tally-label">Total score</p>
+          <p class="tally-val" id="total-score">—</p>
+        </div>
+        <div class="tally-card">
+          <p class="tally-label">Out of</p>
+          <p class="tally-val" id="max-score">—</p>
+        </div>
+      </div>
+      <div class="summary-bar"><div class="summary-fill" id="score-bar"></div></div>
+      <div class="verdict" id="verdict-box">Score all categories to see a recommendation.</div>
+    </div>
+
+    <div class="notes-section">
+      <p class="section-label" style="margin-top:20px;">Notes for your vet</p>
+      <textarea id="notes" placeholder="What changed this week? Any new symptoms, good days, medication changes…"></textarea>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">Print / save as PDF</button>
+
+    <p class="footer">Based on the HHHHHMM Quality of Life Scale. This tool supports your conversation with your vet — it does not replace veterinary advice.</p>
   </div>
 
-  <div style="margin-top: 20px;">
-    <p class="section-label">Notes for your vet</p>
-    <textarea class="note-area" id="notes" placeholder="What changed this week? Any new symptoms, good days, medication changes…"></textarea>
-  </div>
+  <script>
+    const COLORS = {
+      1: { bg: '#fcebeb', color: '#a32d2d', border: '2px solid #f09595' },
+      2: { bg: '#fcebeb', color: '#a32d2d', border: '2px solid #f09595' },
+      3: { bg: '#faeeda', color: '#854f0b', border: '2px solid #fac775' },
+      4: { bg: '#faeeda', color: '#854f0b', border: '2px solid #fac775' },
+      5: { bg: '#eaf3de', color: '#3b6d11', border: '2px solid #c0dd97' }
+    };
 
-  <button class="action-btn" onclick="sendPrompt('Based on this QoL scorecard for my dog: ' + getSummary())">Ask Claude to interpret this score ↗</button>
-</div>
+    const categories = [
+      {
+        id: "hurt",
+        title: "Pain",
+        subtitle: "How often does she show signs of discomfort? (whimpering, guarding, restlessness, bracing)",
+        descs: [
+          "Constant signs of pain — crying, unable to settle, no relief",
+          "Frequent pain signs throughout most of the day",
+          "Occasional episodes, several times a day but not continuous",
+          "Rare — one brief episode or none most days",
+          "No observable pain; relaxed, settles normally"
+        ]
+      },
+      {
+        id: "nausea",
+        title: "Nausea & vomiting",
+        subtitle: "How often does she show nausea? (lip licking, drooling, grass eating, vomiting, retching)",
+        descs: [
+          "Constant nausea or vomiting multiple times daily despite medication",
+          "Nauseated or vomiting most days, hard to control",
+          "Occasional nausea or vomiting a few times a week",
+          "Rare episodes — once a week or less",
+          "No nausea or vomiting; stomach settled"
+        ]
+      },
+      {
+        id: "appetite",
+        title: "Appetite",
+        subtitle: "How willing is she to eat her renal diet or offered food?",
+        descs: [
+          "Refusing all food — won't eat anything",
+          "Eating only tiny amounts even with coaxing or high-value food",
+          "Eating inconsistently — some meals yes, some no",
+          "Eating most meals with mild encouragement",
+          "Eating willingly on her own without coaxing"
+        ]
+      },
+      {
+        id: "hydration",
+        title: "Hydration",
+        subtitle: "How well is she staying hydrated? (skin tent, dry gums, energy, urine output)",
+        descs: [
+          "Severely dehydrated — skin tent >3s, tacky gums, very lethargic",
+          "Clearly dehydrated most days despite fluids or water intake",
+          "Mildly dehydrated some days, manageable with subQ fluids or water",
+          "Mostly well-hydrated with minor interventions",
+          "Well-hydrated consistently; good urine output, moist gums"
+        ]
+      },
+      {
+        id: "treatment",
+        title: "Treatment burden & side effects",
+        subtitle: "Net quality of life after accounting for medication side effects (sedation, dopiness, GI upset, stress of pilling)",
+        descs: [
+          "Medications make her visibly worse — heavily sedated, distressed, or zombie-like most of the day",
+          "Noticeable side effects (grogginess, dullness) for most of the day, most days",
+          "Side effects present but moderate — a few hours of dullness, occasional stress around pilling",
+          "Minimal side effects — brief grogginess or mild stress, resolves quickly",
+          "Tolerates all medications well; no observable side effects"
+        ]
+      },
+      {
+        id: "happiness",
+        title: "Engagement & happiness",
+        subtitle: "How present and like herself is she?",
+        descs: [
+          "Unresponsive or confused — doesn't recognize family, no interest in anything",
+          "Withdrawn most of the day — rarely initiates contact, stares blankly",
+          "Engages sometimes but clearly diminished — less playful, less curious than baseline",
+          "Mostly herself — seeks attention, responds to her name, has clear good moments",
+          "Fully engaged — playful, alert, interactive, recognizably herself"
+        ]
+      },
+      {
+        id: "mobility",
+        title: "Mobility & comfort",
+        subtitle: "How freely can she move and rest comfortably?",
+        descs: [
+          "Cannot stand or reposition without help; bedridden",
+          "Needs assistance to stand or move; tires after a few steps",
+          "Moves independently but slowly; avoids stairs, tires on short walks",
+          "Gets around well with minor limitations; manages most surfaces",
+          "Moves freely for her age; goes outside, navigates home normally"
+        ]
+      },
+      {
+        id: "moregood",
+        title: "More good days than bad",
+        subtitle: "Stepping back — how is this week compared to last week and her baseline?",
+        descs: [
+          "Every day is hard; she seems to be suffering more than enjoying life",
+          "Bad days clearly outnumber good; trend is declining",
+          "About equal — unpredictable, some bright moments but also real lows",
+          "More good than bad; she has genuine moments of joy and comfort",
+          "Mostly good days; setbacks are rare and she bounces back"
+        ]
+      }
+    ];
 
-<script>
-const COLORS = {
-  1: { bg: '#FCEBEB', color: '#A32D2D', border: '#F09595' },
-  2: { bg: '#FCEBEB', color: '#A32D2D', border: '#F09595' },
-  3: { bg: '#FAEEDA', color: '#854F0B', border: '#FAC775' },
-  4: { bg: '#FAEEDA', color: '#854F0B', border: '#FAC775' },
-  5: { bg: '#EAF3DE', color: '#3B6D11', border: '#C0DD97' }
-};
+    const MAX = categories.length * 5;
+    const scores = {};
 
-const categories = [
-  {
-    id: "hurt",
-    title: "Pain",
-    subtitle: "How often does she show signs of discomfort? (whimpering, guarding, restlessness, bracing)",
-    descs: [
-      "Constant signs of pain — crying, unable to settle, no relief",
-      "Frequent pain signs throughout most of the day",
-      "Occasional episodes, several times a day but not continuous",
-      "Rare — one brief episode or none most days",
-      "No observable pain; relaxed, settles normally"
-    ]
-  },
-  {
-    id: "nausea",
-    title: "Nausea & vomiting",
-    subtitle: "How often does she show nausea? (lip licking, drooling, grass eating, vomiting, retching)",
-    descs: [
-      "Constant nausea or vomiting multiple times daily despite medication",
-      "Nauseated or vomiting most days, hard to control",
-      "Occasional nausea or vomiting a few times a week",
-      "Rare episodes — once a week or less",
-      "No nausea or vomiting; stomach settled"
-    ]
-  },
-  {
-    id: "appetite",
-    title: "Appetite",
-    subtitle: "How willing is she to eat her renal diet or offered food?",
-    descs: [
-      "Refusing all food — won't eat anything",
-      "Eating only tiny amounts even with coaxing or high-value food",
-      "Eating inconsistently — some meals yes, some no",
-      "Eating most meals with mild encouragement",
-      "Eating willingly on her own without coaxing"
-    ]
-  },
-  {
-    id: "hydration",
-    title: "Hydration",
-    subtitle: "How well is she staying hydrated? (skin tent, dry gums, energy, urine output)",
-    descs: [
-      "Severely dehydrated — skin tent >3s, tacky gums, very lethargic",
-      "Clearly dehydrated most days despite fluids or water intake",
-      "Mildly dehydrated some days, manageable with subQ fluids or water",
-      "Mostly well-hydrated with minor interventions",
-      "Well-hydrated consistently; good urine output, moist gums"
-    ]
-  },
-  {
-    id: "treatment",
-    title: "Treatment burden & side effects",
-    subtitle: "Net quality of life after accounting for medication side effects (sedation, dopiness, GI upset, stress of pilling)",
-    descs: [
-      "Medications make her visibly worse — heavily sedated, distressed, or zombie-like most of the day",
-      "Noticeable side effects (grogginess, dullness) for most of the day, most days",
-      "Side effects present but moderate — a few hours of dullness, occasional stress around pilling",
-      "Minimal side effects — brief grogginess or mild stress, resolves quickly",
-      "Tolerates all medications well; no observable side effects"
-    ]
-  },
-  {
-    id: "happiness",
-    title: "Engagement & happiness",
-    subtitle: "How present and like herself is she?",
-    descs: [
-      "Unresponsive or confused — doesn't recognize family, no interest in anything",
-      "Withdrawn most of the day — rarely initiates contact, stares blankly",
-      "Engages sometimes but clearly diminished — less playful, less curious than baseline",
-      "Mostly herself — seeks attention, responds to her name, has clear good moments",
-      "Fully engaged — playful, alert, interactive, recognizably herself"
-    ]
-  },
-  {
-    id: "mobility",
-    title: "Mobility & comfort",
-    subtitle: "How freely can she move and rest comfortably?",
-    descs: [
-      "Cannot stand or reposition without help; bedridden",
-      "Needs assistance to stand or move; tires after a few steps",
-      "Moves independently but slowly; avoids stairs, tires on short walks",
-      "Gets around well with minor limitations; manages most surfaces",
-      "Moves freely for her age; goes outside, navigates home normally"
-    ]
-  },
-  {
-    id: "moregood",
-    title: "More good days than bad",
-    subtitle: "Stepping back — how is this week compared to last week and her baseline?",
-    descs: [
-      "Every day is hard; she seems to be suffering more than enjoying life",
-      "Bad days clearly outnumber good; trend is declining",
-      "About equal — unpredictable, some bright moments but also real lows",
-      "More good than bad; she has genuine moments of joy and comfort",
-      "Mostly good days; setbacks are rare and she bounces back"
-    ]
-  }
-];
+    function applyBtnStyle(btn, val, selected) {
+      if (selected) {
+        const c = COLORS[val];
+        btn.style.background = c.bg;
+        btn.style.color = c.color;
+        btn.style.border = c.border;
+        btn.style.fontWeight = '700';
+      } else {
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.border = '0.5px solid #c8c7bf';
+        btn.style.fontWeight = '500';
+      }
+    }
 
-const MAX = categories.length * 5;
-const scores = {};
+    function setScore(catId, val) {
+      scores[catId] = val;
+      document.querySelectorAll('#btns-' + catId + ' .score-btn').forEach(function(b) {
+        applyBtnStyle(b, parseInt(b.dataset.val), parseInt(b.dataset.val) === val);
+      });
+      var cat = categories.find(function(c) { return c.id === catId; });
+      document.getElementById('desc-' + catId).textContent = cat.descs[val - 1];
+      updateSummary();
+    }
 
-function applyBtnStyle(btn, val, selected) {
-  if (selected) {
-    const c = COLORS[val];
-    btn.style.background = c.bg;
-    btn.style.color = c.color;
-    btn.style.border = '2px solid ' + c.border;
-    btn.style.fontWeight = '700';
-  } else {
-    btn.style.background = '';
-    btn.style.color = '';
-    btn.style.border = '0.5px solid var(--color-border-secondary)';
-    btn.style.fontWeight = '500';
-  }
-}
+    function build() {
+      var container = document.getElementById('categories');
+      categories.forEach(function(cat) {
+        var card = document.createElement('div');
+        card.className = 'category-card';
+        var btns = [1,2,3,4,5].map(function(n) {
+          return '<button class="score-btn" data-cat="' + cat.id + '" data-val="' + n + '" onclick="setScore(\'' + cat.id + '\',' + n + ')">' + n + '</button>';
+        }).join('');
+        card.innerHTML =
+          '<p class="cat-title">' + cat.title + '</p>' +
+          '<p class="cat-subtitle">' + cat.subtitle + '</p>' +
+          '<div class="score-buttons" id="btns-' + cat.id + '">' + btns + '</div>' +
+          '<div class="score-desc" id="desc-' + cat.id + '"></div>';
+        container.appendChild(card);
+      });
+      document.getElementById('entry-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('max-score').textContent = MAX;
+    }
 
-function setScore(catId, val) {
-  scores[catId] = val;
-  document.querySelectorAll(`#btns-${catId} .score-btn`).forEach(b => {
-    applyBtnStyle(b, parseInt(b.dataset.val), parseInt(b.dataset.val) === val);
-  });
-  document.getElementById(`desc-${catId}`).textContent = categories.find(c => c.id === catId).descs[val - 1];
-  updateSummary();
-}
+    function updateSummary() {
+      var keys = Object.keys(scores);
+      var total = Object.values(scores).reduce(function(a, b) { return a + b; }, 0);
+      var bar = document.getElementById('score-bar');
+      var verdict = document.getElementById('verdict-box');
+      var pct = Math.round((total / MAX) * 100);
+      bar.style.width = pct + '%';
 
-function build() {
-  const container = document.getElementById('categories');
-  categories.forEach(cat => {
-    const card = document.createElement('div');
-    card.className = 'category-card';
-    const btns = [1,2,3,4,5].map(n =>
-      `<button class="score-btn" data-cat="${cat.id}" data-val="${n}" onclick="setScore('${cat.id}',${n})">${n}</button>`
-    ).join('');
-    card.innerHTML = `
-      <p class="cat-title">${cat.title}</p>
-      <p class="cat-subtitle">${cat.subtitle}</p>
-      <div class="score-buttons" id="btns-${cat.id}">${btns}</div>
-      <div class="score-desc" id="desc-${cat.id}"></div>
-    `;
-    container.appendChild(card);
-  });
-  document.getElementById('entry-date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('max-score').textContent = MAX;
-}
+      if (keys.length < categories.length) {
+        document.getElementById('total-score').textContent = keys.length > 0 ? total + ' (partial)' : '—';
+        bar.style.background = '#c0dd97';
+        verdict.textContent = keys.length + ' of ' + categories.length + ' categories scored.';
+        verdict.style.background = '#f1efe8';
+        verdict.style.color = '#5f5e5a';
+        return;
+      }
 
-function updateSummary() {
-  const scored = Object.keys(scores).length;
-  const total = Object.values(scores).reduce((a, b) => a + b, 0);
-  const bar = document.getElementById('score-bar');
-  const verdict = document.getElementById('verdict-box');
-  const pct = Math.round((total / MAX) * 100);
-  bar.style.width = pct + '%';
+      document.getElementById('total-score').textContent = total;
 
-  const threshold_good = Math.round(MAX * 0.63);
-  const threshold_guarded = Math.round(MAX * 0.43);
+      if (total >= 26) {
+        bar.style.background = '#639922';
+        verdict.style.background = '#eaf3de';
+        verdict.style.color = '#3b6d11';
+        verdict.innerHTML = '<strong>Score ' + total + '/' + MAX + ':</strong> Quality of life appears acceptable. Continue monitoring weekly. Celebrate the good days.';
+      } else if (total >= 18) {
+        bar.style.background = '#ba7517';
+        verdict.style.background = '#faeeda';
+        verdict.style.color = '#854f0b';
+        verdict.innerHTML = '<strong>Score ' + total + '/' + MAX + ':</strong> Guarded. Some areas need attention — review with your vet whether suffering is manageable with current treatment.';
+      } else {
+        bar.style.background = '#a32d2d';
+        verdict.style.background = '#fcebeb';
+        verdict.style.color = '#a32d2d';
+        verdict.innerHTML = '<strong>Score ' + total + '/' + MAX + ':</strong> Quality of life is significantly compromised. A compassionate conversation with your vet about end-of-life options is appropriate.';
+      }
+    }
 
-  if (scored < categories.length) {
-    document.getElementById('total-score').textContent = scored > 0 ? total + ' (partial)' : '—';
-    bar.style.background = '#C0DD97';
-    verdict.textContent = `${scored} of ${categories.length} categories scored.`;
-    verdict.style.background = 'var(--color-background-secondary)';
-    verdict.style.color = 'var(--color-text-secondary)';
-    return;
-  }
-
-  document.getElementById('total-score').textContent = total;
-
-  if (total >= threshold_good) {
-    bar.style.background = '#639922';
-    verdict.style.background = '#EAF3DE';
-    verdict.style.color = '#3B6D11';
-    verdict.innerHTML = '<strong>Score ' + total + '/' + MAX + ':</strong> Quality of life appears acceptable. Continue monitoring weekly. Celebrate the good days.';
-  } else if (total >= threshold_guarded) {
-    bar.style.background = '#BA7517';
-    verdict.style.background = '#FAEEDA';
-    verdict.style.color = '#854F0B';
-    verdict.innerHTML = '<strong>Score ' + total + '/' + MAX + ':</strong> Guarded. Some areas need attention — review with your vet whether suffering is manageable with current treatment.';
-  } else {
-    bar.style.background = '#A32D2D';
-    verdict.style.background = '#FCEBEB';
-    verdict.style.color = '#A32D2D';
-    verdict.innerHTML = '<strong>Score ' + total + '/' + MAX + ':</strong> Quality of life is significantly compromised. A compassionate conversation with your vet about end-of-life options is appropriate.';
-  }
-}
-
-function getSummary() {
-  const name = document.getElementById('dog-name').value || 'my dog';
-  const date = document.getElementById('entry-date').value;
-  const notes = document.getElementById('notes').value;
-  const total = Object.values(scores).reduce((a, b) => a + b, 0);
-  const lines = categories.map(c => `${c.title}: ${scores[c.id] || '?'}/5`).join(', ');
-  return `${name} on ${date}. Scores (out of ${MAX}): ${lines}. Total: ${total}/${MAX}. Notes: ${notes || 'none'}`;
-}
-
-build();
-</script>
+    build();
+  </script>
+</body>
+</html>
